@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv, char **env)
 {
-    int i;
+    int i = 0;
 
     Verilated::commandArgs(argc, argv);
 
@@ -19,24 +19,55 @@ int main(int argc, char **argv, char **env)
     top->alu_op2 = 1;
     top->alu_control = 0;
 
-    for (i = 0; i < 31; i++)
+    // TEST SET LESS THAN
+    // for (i = 0; i < 31; i++)
+    // {
+    //     top->alu_control = 5;
+    //     if (i % 2 == 0)
+    //     {
+    //         top->alu_op1 = top->alu_op2 * 2;
+    //     }
+    //     else
+    //     {
+    //         top->alu_op2 = top->alu_op1 + 1;
+    //     }
+    //     top->eval(); // alu is asynchronous, eval should be done whenever a change is applied
+    //     // and not in the clock toggle loop, otherwise only evaluated on clock rising edge
+    //     tfp->dump(i);
+    //     if (Verilated::gotFinish())
+    //         exit(0);
+    // }
+
+    // IMPROVED TEST SET LESS THAN (Verifying signed number behaviour)
+
+    int max_simt = 50;
+    top->alu_control = 5;
+
+    top->alu_op1 = -11;
+    top->alu_op2 = -15;
+    for (i = 0; i < max_simt / 2; i++)
     {
-        top->alu_control = 5;
-        if (i % 2 == 0)
-        {
-            top->alu_op1 = top->alu_op2 * 2;
-        }
-        else
-        {
-            top->alu_op2 = top->alu_op1 + 1;
-        }
-        top->eval(); // alu is asynchronous, eval should be done whenever a change is applied
-        // and not in the clock toggle loop, otherwise only evaluated on clock rising edge
+        top->alu_op2 += 1;
+        top->eval();
 
         tfp->dump(i);
         if (Verilated::gotFinish())
             exit(0);
     }
+
+    top->alu_op1 = 11;
+    top->alu_op2 = -10;
+    for (; i < max_simt; i++)
+    {
+
+        top->alu_op2 += 1;
+        top->eval();
+
+        tfp->dump(i);
+        if (Verilated::gotFinish())
+            exit(0);
+    }
+
     tfp->close();
     exit(0);
 }

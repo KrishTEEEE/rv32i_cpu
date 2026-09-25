@@ -12,7 +12,7 @@ module alu(
             3'd2: alu_out = alu_op1 & alu_op2;
             3'd3: alu_out = alu_op1 | alu_op2;
             // 3'd4:;
-            3'd5: alu_out = {31'b0, alu_op1 < alu_op2};
+            3'd5: alu_out = {31'b0, alu_op1 < alu_op2}; // Unsigned!
             // 3'd6:;
             // 3'd7:;  
             default: alu_out = 32'b0;
