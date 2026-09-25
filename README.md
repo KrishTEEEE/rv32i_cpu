@@ -1,2 +1,7 @@
 # rv32i_cpu
-Implementation of a RISCV processor in SystemVerilog
+
+SystemVerilog Implementation of a single-cycle RISCV processor based on the RV32I Instruction Set Architecture.
+
+## Testbenches
+
+- ALU: Lazy verification
