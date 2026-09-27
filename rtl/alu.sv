@@ -10,7 +10,7 @@ module alu(
     localparam SUB = 3'd1;
     localparam AND = 3'd2;
     localparam OR = 3'd3;
-    localparam SLTU = 3'd5; //set less than unsigned
+    localparam SLT = 3'd5; //set less than signed
 
     // alu_op1 corresponds to rs1 (ins[19:15]), alu_op2 corresponds to rs2 (ins[24:20])
     always_comb begin
@@ -20,7 +20,7 @@ module alu(
             AND: alu_out = alu_op1 & alu_op2;
             OR: alu_out = alu_op1 | alu_op2;
             // 3'd4:;
-            SLTU: alu_out = {31'b0, alu_op1 < alu_op2}; // Unsigned!
+            SLT: alu_out = alu_op1[31]&~alu_op2[31] | ~(alu_op1[31]^alu_op2[31])&(alu_op1[30:0] < alu_op2[30:0]);
             // 3'd6:;
             // 3'd7:;  
             default: alu_out = 32'b0;

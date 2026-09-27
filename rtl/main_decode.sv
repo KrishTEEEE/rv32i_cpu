@@ -6,6 +6,8 @@ module main_decode(
     output logic [1:0]      alu_op, // internal control unit signal to simplify alu decoding
     output logic            wr_data_mem, // write to data memory
     output logic            result_src // source of operation result, data_mem or alu_out
+
+    //TODO: ADD PC_SRC!
 );
     // opcode mapping
     localparam OP_R = 7'd51;

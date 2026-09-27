@@ -1,6 +1,10 @@
 // function: sign extend an immediate to 32-bits from the instruction, extending
 // following different ins formats based on imm_src control signal
-module extend(input logic [31:7] ins, input logic [1:0] imm_src, output logic [31:0] imm_ext);
+module extend(
+    input logic [31:7] ins,
+    input logic [1:0] imm_src,
+    output logic [31:0] imm_ext
+    );
     always_comb begin
         case(imm_src)
         2'b0: imm_ext = {20{ins[31]}, ins[31:20]}; // I-type, includes imm arithmetic, logic, and load instructions
