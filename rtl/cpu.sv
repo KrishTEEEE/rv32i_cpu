@@ -1,4 +1,4 @@
-module top(
+module cpu(
     input logic             clk,
     input logic             rst, //verify if this connected to pc.rst works
     output logic [31:0]     result
