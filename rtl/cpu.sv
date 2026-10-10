@@ -1,6 +1,7 @@
 module cpu(
     input logic             clk,
     input logic             rst, //verify if this connected to pc.rst works
+    input logic             en,
     output logic [31:0]     result
 );
   
@@ -41,13 +42,13 @@ module cpu(
     logic [31:0]        data_mem_out;
 
     // TODO: ADD PC_SRC and pc_val EN
-    pc pc_val(.clk(clk), .pc_src(1'b0), .rst(rst), .en(1'b1), .imm_ext(imm_ext), .pc_val(pc_out));
+    pc pc_inst(.clk(clk), .pc_src(1'b0), .rst(rst), .en(en), .imm_ext(imm_ext), .pc_val(pc_out));
     ins_mem ins_mem(.pc(pc_out), .ins_out(ins_out));
     main_decode m_decode(.opcode(opcode), .wr_reg(wr_reg), .imm_src(imm_src), .alu_src(alu_src), .alu_op(alu_op), .wr_data_mem(wr_data_mem), .result_src(result_src));
     alu_decode alu_decode(.opcode_5(opcode[5]), .funct7_5(funct7[5]), .funct3(funct3), .alu_op(alu_op), .alu_control(alu_control));
-    reg_file reg_f(.clk(clk), .rs1(rs1), .rs2(rs2), .rd(rd), .din(result), .wr_en(wr_reg), .rs1_out(rs1_out), .rs2_out(rs2_out));
+    reg_file reg_inst(.clk(clk), .rs1(rs1), .rs2(rs2), .rd(rd), .din(result), .wr_en(wr_reg), .rs1_out(rs1_out), .rs2_out(rs2_out));
     extend imm_extend(.ins(ins_out), .imm_src(imm_src), .imm_ext(imm_ext));
-    mux alu_op2(.in_0(rs2_out), .in_1(imm_ext), .sel(alu_src), .mux_out(alu_op2));
+    mux alu_op2_sel(.in_0(rs2_out), .in_1(imm_ext), .sel(alu_src), .mux_out(alu_op2));
     alu alu(.alu_op1(rs1_out), .alu_op2(alu_op2), .alu_control(alu_control), .alu_out(alu_out));
     data_mem data_mem(.clk(clk), .addr(alu_out), .wr_en(wr_data_mem), .din(rs2_out), .dout(data_mem_out));
     mux result_mux(.in_0(alu_out), .in_1(data_mem_out), .sel(result_src), .mux_out(result));
