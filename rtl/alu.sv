@@ -27,10 +27,10 @@ module alu(
             AND: alu_out = alu_op1 & alu_op2;
             OR: alu_out = alu_op1 | alu_op2;
             XOR: alu_out = alu_op1 ^ alu_op2;
-            SLT: alu_out = alu_op1[31]&~alu_op2[31] | ~(alu_op1[31]^alu_op2[31])&(alu_op1[30:0] < alu_op2[30:0]);
-            //signed set less than, implemented in explicit logic
+            SLT: alu_out = {31'b0, $signed(alu_op1) < $signed(alu_op2)};
+            // Old implementation: alu_op1[31]&~alu_op2[31] | ~(alu_op1[31]^alu_op2[31])&(alu_op1[30:0] < alu_op2[30:0]);
             //instead of subtraction due to complications with overflow
-            SLTU: alu_out = alu_op1 < alu_op2;
+            SLTU: alu_out = {31'b0, alu_op1 < alu_op2};
             SLL: alu_out = alu_op1 << alu_op2[4:0]; //You can only shift 31 bits at most
             SRL: alu_out = alu_op1 >> alu_op2[4:0]; //inferred as barrel shifters
             SRA: alu_out = $signed(alu_op1) >>> alu_op2[4:0]; 
