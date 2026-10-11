@@ -27,6 +27,11 @@ module cpu(
     logic               result_src; // source of operation result, data_mem or alu_out
     logic [2:0]         alu_control;
 
+    // Control signal for register file and data memory
+    logic wr_reg_gated, wr_data_mem_gated;
+    assign wr_reg_gated = en && !rst && wr_reg;
+    assign wr_data_mem_gated = en && !rst && wr_data_mem;
+
     // ImmExt
     logic [31:0]        imm_ext;
 
@@ -50,7 +55,7 @@ module cpu(
 
     alu_decode alu_decode(.opcode_5(opcode[5]), .funct7_5(funct7[5]), .funct3(funct3), .alu_op(alu_op), .alu_control(alu_control));
 
-    reg_file reg_inst(.clk(clk), .rs1(rs1), .rs2(rs2), .rd(rd), .din(result), .wr_en(!rst && wr_reg), .rs1_out(rs1_out), .rs2_out(rs2_out));
+    reg_file reg_inst(.clk(clk), .rs1(rs1), .rs2(rs2), .rd(rd), .din(result), .wr_en(wr_reg_gated), .rs1_out(rs1_out), .rs2_out(rs2_out));
 
     extend imm_extend(.ins(ins_out), .imm_src(imm_src), .imm_ext(imm_ext));
 
@@ -58,7 +63,7 @@ module cpu(
 
     alu alu(.alu_op1(rs1_out), .alu_op2(alu_op2), .alu_control(alu_control), .alu_out(alu_out));
 
-    data_mem data_mem(.clk(clk), .addr(alu_out), .wr_en(!rst && wr_data_mem), .din(rs2_out), .dout(data_mem_out));
+    data_mem data_mem(.clk(clk), .addr(alu_out), .wr_en(wr_data_mem_gated), .din(rs2_out), .dout(data_mem_out));
 
     mux result_mux(.in_0(alu_out), .in_1(data_mem_out), .sel(result_src), .mux_out(result));
 
