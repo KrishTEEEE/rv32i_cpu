@@ -24,7 +24,7 @@ int main(int argc, char **argv, char **env)
     top->rst = 1;
     top->en = 0;
 
-    for (i = 0; i < 30; i++)
+    for (i = 0; i < 100; i++)
     {
         for (clk = 0; clk < 2; clk++)
         {
@@ -33,8 +33,8 @@ int main(int argc, char **argv, char **env)
             top->clk = !top->clk;
             top->eval(); // updates outputs if there are changes
         }
-        top->rst = (i < 5) || (i > 24);
-        top->en = (i > 7) && (i < 20);
+        top->rst = i < 5;
+        top->en = i > 10;
 
         if (Verilated::gotFinish())
             exit(0);

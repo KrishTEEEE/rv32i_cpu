@@ -15,6 +15,7 @@ module alu(
     localparam SLL = 4'd7; //shift left logical
     localparam SRL = 4'd8; //shift right logical
     localparam SRA = 4'd9; //shift right arithmetic
+    // NB: There is no SLA because it is equivalent to SLL
 
 
 
@@ -25,12 +26,14 @@ module alu(
             SUB: alu_out = alu_op1 - alu_op2;
             AND: alu_out = alu_op1 & alu_op2;
             OR: alu_out = alu_op1 | alu_op2;
-            // 3'd4:;
+            XOR: alu_out = alu_op1 ^ alu_op2;
             SLT: alu_out = alu_op1[31]&~alu_op2[31] | ~(alu_op1[31]^alu_op2[31])&(alu_op1[30:0] < alu_op2[30:0]);
             //signed set less than, implemented in explicit logic
             //instead of subtraction due to complications with overflow
-            // 3'd6:;
-            // 3'd7:;  
+            SLTU: alu_out = alu_op1 < alu_op2;
+            SLL: alu_out = alu_op1 << alu_op2[4:0]; //You can only shift 31 bits at most
+            SRL: alu_out = alu_op1 >> alu_op2[4:0]; //inferred as barrel shifters
+            SRA: alu_out = $signed(alu_op1) >>> alu_op2[4:0]; 
             default: alu_out = 32'b0;
         endcase
     end
