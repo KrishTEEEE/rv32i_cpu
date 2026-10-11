@@ -9,14 +9,14 @@ module main_decode(
 
     //TODO: ADD PC_SRC!
 );
-    // opcode mapping
+    // Input: opcode mapping (between instruction and main_decode)
     localparam OP_R = 7'd51;
     localparam OP_L = 7'd3;
     localparam OP_I = 7'd19;
     localparam OP_S = 7'd35;
     localparam OP_B = 7'd99;
 
-    // alu_op mapping
+    // Output: alu_op mapping (between main_decode and alu_decode)
     localparam ALU_MEM = 2'b0;
     localparam ALU_ARITH = 2'b10;
     localparam ALU_BRANCH = 2'b01;
