@@ -25,7 +25,7 @@ module cpu(
     logic [1:0]         alu_op; // internal control unit signal to simplify alu decoding
     logic               wr_data_mem; // write to data memory
     logic               result_src; // source of operation result, data_mem or alu_out
-    logic [2:0]         alu_control;
+    logic [3:0]         alu_control;
 
     // Control signal for register file and data memory
     logic wr_reg_gated, wr_data_mem_gated;

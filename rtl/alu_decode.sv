@@ -27,11 +27,19 @@ module alu_decode(
             ALU_MEM: alu_control = ADD;
             ALU_BRANCH: alu_control = SUB;
             ALU_ARITH: casez({funct3, opcode_5, funct7_5})
-                    5'b00000: alu_control = ADD;
-                    5'b00001: alu_control = ADD;
+            // funct3 is roughly the same between I-type arithemetic and R-type ins
+            // opcode[5] = 1 -> R-type; opcode[5] = 0 -> I-type
+            // funct7[5] is used to differentiate R-type ADD, SUB; R-type SRL, SRA; I-type SRLI, SRAI;
+            // opcode[5] is necessary for us to know when funct7[5] exists
+                    5'b0000z: alu_control = ADD;
                     5'b00010: alu_control = ADD;
                     5'b00011: alu_control = SUB;
+                    5'b001zz: alu_control = SLL;
                     5'b010zz: alu_control = SLT;
+                    5'b011zz: alu_control = SLTU;
+                    5'b100zz: alu_control = XOR;
+                    5'b101z0: alu_control = SRL;
+                    5'b101z1: alu_control = SRA;
                     5'b110zz: alu_control = OR;
                     5'b111zz: alu_control = AND;
              endcase
