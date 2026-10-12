@@ -11,6 +11,7 @@ Working and verified:
   `xor`, `srl`, `sra`, `or`, `and`
 - All I-type arithmetic/logic instructions: `addi`, `slti`, `sltiu`, `xori`,
   `ori`, `andi`, `slli`, `srli`, `srai`
+- Branches: `beq`, `bne` — forward and backward, taken and not-taken
 
 Implemented but not yet verified:
 
@@ -18,8 +19,7 @@ Implemented but not yet verified:
 
 Not yet implemented:
 
-- Branches (`beq`, `bne`, `blt`, `bge`, `bltu`, `bgeu`) — `pc_src` is currently
-  tied low
+- Remaining branches: `blt`, `bge`, `bltu`, `bgeu`
 - Jumps (`jal`, `jalr`) and upper-immediate instructions (`lui`, `auipc`)
 - Byte and halfword memory access (`lb`, `lh`, `lbu`, `lhu`, `sb`, `sh`)
 - 5-stage pipelining
@@ -43,6 +43,11 @@ shifts, where I-type reclaims it to distinguish `srli` from `srai`.
 If rebuilt, a flat single-level decoder would be preferable: the encoded
 intermediate stops paying for itself once the ALU has ten operations.
 
+**Branches.** The branch unit drives the ALU to subtract and tests the result,
+asserting `pc_src` to select the branch target over PC+4. B-type immediates are
+sign-extended with an implicit low zero, so targets are 2-byte aligned by
+encoding even though RV32I requires 4-byte alignment in practice.
+
 **Reset.** The register file and data memory are deliberately not reset — their
 contents are architecturally undefined until software writes them, and resetting
 them would prevent inference of LUTRAM and cost significant area. Instead the
@@ -52,28 +57,3 @@ legitimate fetch; without this, a self-referential instruction such as
 A pipelined design gets this for free via per-stage valid bits.
 
 ## Repository layout
-
-rtl/ SystemVerilog source
-tb/ Verilator C++ testbenches
-sim.sh build and run a given testbench
-
-## Building and running
-
-./sim.sh cpu
-
-Programs are loaded into instruction memory from `ins_mem.mem` via `$readmemh` —
-one 32-bit instruction per line, 8 hex characters, no prefix. Waveforms are
-dumped to VCD and viewed in Surfer.
-
-## Verification
-
-Unit testbenches cover the ALU and data memory. The CPU-level test runs a
-21-instruction program exercising every implemented R-type and I-type
-instruction from two source values (`x1 = 5`, `x2 = -3`), with results checked
-against hand-computed expected values — including signed/unsigned pairs
-(`slt`/`sltu`) and logical/arithmetic shift pairs (`srl`/`sra`) to catch
-signedness bugs.
-
-Still to add: directed testbenches for the control unit, register file and sign
-extension; branch behaviour once branches exist; and the `riscv-tests` `rv32ui`
-suite.
