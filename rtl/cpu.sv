@@ -47,7 +47,12 @@ module cpu(
     logic [31:0]        data_mem_out;
 
     // TODO: ADD PC_SRC
-    pc pc_inst(.clk(clk), .pc_src(1'b0), .rst(rst), .en(en), .imm_ext(imm_ext), .pc_val(pc_out));
+    // PC and branching
+    logic               pc_src;
+
+    pc pc_inst(.clk(clk), .pc_src(pc_src), .rst(rst), .en(en), .imm_ext(imm_ext), .pc_val(pc_out));
+
+    branch branch_inst(.funct3(funct3), .alu_out(alu_out), .opcode_6(opcode[6]), .pc_src(pc_src));
 
     ins_mem ins_mem(.pc(pc_out), .ins_out(ins_out));
 

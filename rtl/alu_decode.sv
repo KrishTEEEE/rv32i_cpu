@@ -25,7 +25,7 @@ module alu_decode(
     always_comb begin
         case(alu_op)
             ALU_MEM: alu_control = ADD;
-            ALU_BRANCH: alu_control = SUB;
+            ALU_BRANCH: alu_control = SUB; // beq, bne
             ALU_ARITH: casez({funct3, opcode_5, funct7_5})
             // funct3 is roughly the same between I-type arithemetic and R-type ins
             // opcode[5] = 1 -> R-type; opcode[5] = 0 -> I-type
