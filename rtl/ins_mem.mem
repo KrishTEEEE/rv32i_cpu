@@ -1,3 +1,4 @@
+// Assembly for testing R-type and I-type arithmetics + BEQ and BNE
 //00500093
 //ffd00113
 //00a08193
@@ -36,14 +37,63 @@
 //fffd8d93
 //fe0d9ce3
 //02a00e93
-01000c93  // addi x25, x0, 16     base address
-fff00f13  // addi x30, x0, 0xFFF  x30 = ffffffff (-1)
-02a00e93  // addi x29, x0, 42     x29 = 2a
-01eca023  // sw x30, 0(x25)       mem[16] = ffffffff
-01dca223  // sw x29, 4(x25)       mem[20] = 2a, +ve S-type offset
-ffecac23  // sw x30, -8(x25)      mem[8] = ffffffff, -ve S-type offset
-00000f13  // addi x30, x0, 0      clear x30
-00000e93  // addi x29, x0, 0      clear x29
-004cae83  // lw x29, 4(x25)       x29 = 2a
-ff8caf03  // lw x30, -8(x25)      x30 = ffffffff
-000cae03  // lw x28, 0(x25)       x28 = ffffffff
+// Assembly for testing lw, sw
+//01000c93  // addi x25, x0, 16     base address
+//fff00f13  // addi x30, x0, 0xFFF  x30 = ffffffff (-1)
+//02a00e93  // addi x29, x0, 42     x29 = 2a
+//01eca023  // sw x30, 0(x25)       mem[16] = ffffffff
+//01dca223  // sw x29, 4(x25)       mem[20] = 2a, +ve S-type offset
+//ffecac23  // sw x30, -8(x25)      mem[8] = ffffffff, -ve S-type offset
+//00000f13  // addi x30, x0, 0      clear x30
+//00000e93  // addi x29, x0, 0      clear x29
+//004cae83  // lw x29, 4(x25)       x29 = 2a
+//ff8caf03  // lw x30, -8(x25)      x30 = ffffffff
+//000cae03  // lw x28, 0(x25)       x28 = ffffffff
+// Assembly for testing branches
+00500093  // addi x1, x0, 5        x1 = 5
+ffd00113  // addi x2, x0, -3       x2 = fffffffd
+00000413  // addi x8,  x0, 0
+00000493  // addi x9,  x0, 0
+00000513  // addi x10, x0, 0
+00000593  // addi x11, x0, 0
+00000613  // addi x12, x0, 0
+00000693  // addi x13, x0, 0
+00000713  // addi x14, x0, 0
+00000793  // addi x15, x0, 0
+00000813  // addi x16, x0, 0
+00000893  // addi x17, x0, 0
+00000913  // addi x18, x0, 0
+00000993  // addi x19, x0, 0
+00000a13  // addi x20, x0, 0
+00000a93  // addi x21, x0, 0
+00000b13  // addi x22, x0, 0
+00108463  // beq  x1, x1, +8       5 == 5                      TAKEN
+06300413  // addi x8,  x0, 99      *** MUST NOT EXECUTE ***
+00208463  // beq  x1, x2, +8       5 == -3                     not taken
+00700493  // addi x9,  x0, 7
+00209463  // bne  x1, x2, +8       5 != -3                     TAKEN
+06300513  // addi x10, x0, 99      *** MUST NOT EXECUTE ***
+00109463  // bne  x1, x1, +8       5 != 5                      not taken
+00700593  // addi x11, x0, 7
+00114463  // blt  x2, x1, +8       signed -3 < 5               TAKEN
+06300613  // addi x12, x0, 99      *** MUST NOT EXECUTE ***
+0020c463  // blt  x1, x2, +8       signed 5 < -3               not taken
+00700693  // addi x13, x0, 7
+0010c463  // blt  x1, x1, +8       signed 5 < 5    equality    not taken
+00700713  // addi x14, x0, 7
+00116463  // bltu x2, x1, +8       unsigned fffffffd < 5       not taken   KEY
+00700793  // addi x15, x0, 7
+0020e463  // bltu x1, x2, +8       unsigned 5 < fffffffd       TAKEN       KEY
+06300813  // addi x16, x0, 99      *** MUST NOT EXECUTE ***
+0020d463  // bge  x1, x2, +8       signed 5 >= -3              TAKEN
+06300893  // addi x17, x0, 99      *** MUST NOT EXECUTE ***
+00115463  // bge  x2, x1, +8       signed -3 >= 5              not taken
+00700913  // addi x18, x0, 7
+0010d463  // bge  x1, x1, +8       signed 5 >= 5   equality    TAKEN
+06300993  // addi x19, x0, 99      *** MUST NOT EXECUTE ***
+00117463  // bgeu x2, x1, +8       unsigned fffffffd >= 5      TAKEN       KEY
+06300a13  // addi x20, x0, 99      *** MUST NOT EXECUTE ***
+0020f463  // bgeu x1, x2, +8       unsigned 5 >= fffffffd      not taken   KEY
+00700a93  // addi x21, x0, 7
+0010f463  // bgeu x1, x1, +8       unsigned 5 >= 5 equality    TAKEN
+06300b13  // addi x22, x0, 99      *** MUST NOT EXECUTE ***

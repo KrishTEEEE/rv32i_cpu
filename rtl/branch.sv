@@ -8,8 +8,12 @@ module branch(
         if(!opcode_6) pc_src = 1'b0; // checks if this is a branch instruction
         else begin
             case(funct3)
-                3'd0: if(!alu_out) pc_src = 1'b1; else pc_src = 1'b0; //beq
-                3'd1: if(!alu_out) pc_src = 1'b0; else pc_src = 1'b1; //bne
+                3'b0: if(!alu_out) pc_src = 1'b1; else pc_src = 1'b0; //beq
+                3'b1: if(alu_out) pc_src = 1'b1; else pc_src = 1'b0; //bne
+                3'b100: if(alu_out) pc_src = 1'b1; else pc_src = 1'b0; //blt
+                3'b101: if(!alu_out) pc_src = 1'b1; else pc_src = 1'b0; //bge
+                3'b110: if(alu_out) pc_src = 1'b1; else pc_src = 1'b0; //bltu
+                3'b111: if(!alu_out) pc_src = 1'b1; else pc_src = 1'b0; //bgeu
                 default: pc_src = 1'b0;
             endcase
         end

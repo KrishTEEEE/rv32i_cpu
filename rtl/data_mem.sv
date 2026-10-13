@@ -6,9 +6,9 @@ module data_mem #(parameter ADDRESS_WIDTH = 6 // 32 is too large for verilator m
     input logic [31:0]      din, // data input for write
     output logic [31:0]     dout); // data output for read
 
-    logic [31:0] mem [2**ADDRESS_WIDTH-1: 0]; // NB: ADDRESS_WIDTH -1 is incorrect!
+    logic [7:0] mem [2**ADDRESS_WIDTH-1: 0]; // NB: ADDRESS_WIDTH -1 is incorrect!
 
-    // We are building a single-cycle processor, so all reads are asynchronous
+    // Async reads for single cycle processor
     assign dout = mem[addr[ADDRESS_WIDTH-1:0]];
 
     always_ff @(posedge clk) begin
