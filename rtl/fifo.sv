@@ -11,7 +11,7 @@
 // but remaining bits are equal
 
 module fifo #(
-    parameter DEPTH = 8, WIDTH = 4
+    parameter DEPTH = 8, WIDTH = 4 // for pointer wraparound to work, depth must be 2^n
 )(
     input logic                 clk1,
     input logic                 rst,
@@ -34,11 +34,11 @@ module fifo #(
         end
         else begin
             if(rd_en && !empty) begin
-                dout <= mem_array[rd_ptr];
+                dout <= mem_array[rd_ptr[$clog2(DEPTH)-1:0]];
                 rd_ptr <= rd_ptr + 1'b1;
             end
             if(wr_en && !full) begin
-                mem_array[wr_ptr] <= din;
+                mem_array[wr_ptr[$clog2(DEPTH)-1:0]] <= din;
                 wr_ptr <= wr_ptr + 1'b1;
             end
         end
