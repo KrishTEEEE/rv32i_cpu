@@ -37,7 +37,8 @@ module fifo #(
                 dout <= mem_array[rd_ptr[$clog2(DEPTH)-1:0]];
                 rd_ptr <= rd_ptr + 1'b1;
             end
-            if(wr_en && !full) begin
+            if(wr_en && (!full || rd_en)) begin // allows simultaneous read and write when FIFO is full
+            // hardware equates to read first then write
                 mem_array[wr_ptr[$clog2(DEPTH)-1:0]] <= din;
                 wr_ptr <= wr_ptr + 1'b1;
             end
