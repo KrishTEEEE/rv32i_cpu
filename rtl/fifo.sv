@@ -1,7 +1,14 @@
-// my implementation of a synchronous FIFO
-// A FIFO is a buffer that stores word and returns them in the order of words being written
-// Both write and read running on the same clock
-// It is implemented using a memory array with two pointers and full, empty flags
+// simple implementation of the fifo decided to assert full when wr_ptr is 1 less than rd_ptr
+// so as to distinguish between full and empty, since an empty fifo and an actually full fifo both have equal ptrs
+// as a result one mem array slot can never be written, a n-depth fifo has effectively n-1 depth
+
+// To utilise the entire depth of the fifo, we need a better way of telling: When ptrs are equal
+// is this a read more than write, i.e. empty; or write more than read, i.e. full, state?
+// Hence, we introduce an extra bit to our counters
+// The idea: for an empty fifo, read catches up to write, so they must have the same MSB, either both 0,
+// or both 1, i.e. having wrapped around the mem array once. So rd_ptr == wr_ptr
+// If it's a full fifo, the write catches up to read, so it has to lap the read ptr!, thus different MSBs
+// but remaining bits are equal
 
 module fifo #(
     parameter DEPTH = 8, WIDTH = 4
@@ -17,8 +24,8 @@ module fifo #(
 );
     logic [WIDTH-1: 0] mem_array [DEPTH-1:0];
 
-    logic [$clog2(DEPTH)-1:0]      wr_ptr;
-    logic [$clog2(DEPTH)-1:0]      rd_ptr;
+    logic [$clog2(DEPTH):0]      wr_ptr;
+    logic [$clog2(DEPTH):0]      rd_ptr;
 
     always_ff@(posedge clk1)begin
         if(rst)begin
@@ -36,8 +43,6 @@ module fifo #(
             end
         end
     end
-    assign full = (wr_ptr + 1'b1 == rd_ptr);
+    assign full = (wr_ptr ^ rd_ptr) == {1'b1, {$clog2(DEPTH){1'b0}}};
     assign empty = (wr_ptr == rd_ptr);
-
-
 endmodule

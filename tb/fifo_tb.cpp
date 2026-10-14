@@ -24,10 +24,10 @@ int main(int argc, char **argv, char **env)
 
     for (i = 0; i < 100; i++)
     {
-        top->din = 2*i+1; // avoid writing 0
+        top->din = 2 * i + 1; // avoid writing 0
         top->rst = i < 5;
-        top->rd_en = ((i > 10) && (i < 15)) || i > 30;
-        top->wr_en = ((i >= 15) && (i < 26)) || i > 34;
+        top->rd_en = ((i > 10) && (i < 15)) || i > 25;
+        top->wr_en = ((i >= 15) && (i < 40)) || i > 60;
 
         for (clk = 0; clk < 2; clk++)
         {
