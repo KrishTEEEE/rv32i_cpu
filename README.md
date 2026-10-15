@@ -26,7 +26,7 @@ Not yet implemented:
 
 ## Design notes
 
-**Memory addressing.** RISC-V defines a flat byte-addressed address space, so
+**Memory addressing** RISC-V defines a flat byte-addressed address space, so
 the PC holds byte addresses and increments by 4. Instruction and data memory are
 stored as 32-bit word arrays, indexed with `addr[ADDRESS_WIDTH+1:2]` — the low
 two bits are discarded. The byte-addressed interface is architectural; the
