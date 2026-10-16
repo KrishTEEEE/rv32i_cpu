@@ -33,7 +33,7 @@ module alu(
             SLTU: alu_out = {31'b0, alu_op1 < alu_op2};
             SLL: alu_out = alu_op1 << alu_op2[4:0]; //You can only shift 31 bits at most
             SRL: alu_out = alu_op1 >> alu_op2[4:0]; //inferred as barrel shifters
-            SRA: alu_out = $signed(alu_op1) >>> alu_op2[4:0]; 
+            SRA: alu_out = $signed(alu_op1) >>> alu_op2[4:0]; // it copies the sign bit, compatible with unsigned numbers
             default: alu_out = 32'b0;
         endcase
     end
